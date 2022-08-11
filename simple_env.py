@@ -14,12 +14,13 @@ def save_gif(episode_name, episode_obs, dur=0.01, dir='gif'):
 print(metaworld.ML1.ENV_NAMES)  # Check out the available environments
 
 env_name = 'drawer-open-v2-goal-observable'
-camera_name = 'corner2'
+camera_name = 'topview'
 # ml1 = metaworld.ML1(env_name) # Construct the benchmark, sampling tasks
 
 # env = ml1.train_classes[env_name]()  # Create an environment with task `pick_place`
 # task = random.choice(ml1.train_tasks)
 # env.set_task(task)  # Set task
+breakpoint()
 env  = ALL_V2_ENVIRONMENTS_GOAL_OBSERVABLE[env_name]()
 
 
@@ -37,7 +38,7 @@ for i in range(0,2):
     for j in range(0, 500):
         # breakpoint()
         # env.viewer.cam.lookat[0] = 0.1
-        img = env.render(offscreen=True, camera_name='corner2')
+        img = env.render(offscreen=True, camera_name=camera_name)
         # env.render()
         episode_obs.append(img)
         a = env.action_space.sample()  # Sample an action
