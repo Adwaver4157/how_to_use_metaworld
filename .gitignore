@@ -1,1 +1,7 @@
 gif/
+*.zip
+wandb/
+runs/
+keybindings.json
+envs/__pycache__/
+*.TXT

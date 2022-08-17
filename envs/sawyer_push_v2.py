@@ -1,9 +1,9 @@
-from metaworld.envs.mujoco.sawyer_xyz.v2.sawyer_drawer_open_v2 import SawyerDrawerOpenEnvV2
+from metaworld.envs.mujoco.sawyer_xyz.v2.sawyer_push_v2 import SawyerPushEnvV2
+from metaworld.envs.asset_path_utils import full_v2_path_for
 
-class SawyerDrawerOpenEnvV2_ChangeCamera(SawyerDrawerOpenEnvV2):
-    def __init__(self, model_path='xmls/custom_sawyer/sawyer_drawer_change_camera.xml', seed=None):
+class SawyerPushEnv_ChangeV2(SawyerPushEnvV2):
+    def __init__(self, seed=None):
         
-        self.model_path = model_path
         if seed is not None:
                 st0 = np.random.get_state()
                 np.random.seed(seed)
@@ -16,7 +16,7 @@ class SawyerDrawerOpenEnvV2_ChangeCamera(SawyerDrawerOpenEnvV2):
         if seed is not None:
             self.seed(seed)
             np.random.set_state(st0)
-        self.random_init = False
+        self.random_init = True
     
     @property
     def model_name(self):
@@ -39,4 +39,8 @@ class SawyerDrawerOpenEnvV2_ChangeCamera(SawyerDrawerOpenEnvV2):
                 mode='offscreen',
                 camera_name=camera_name
             )
+    
+    @property
+    def model_name(self):
+        return full_v2_path_for('sawyer_xyz/sawyer_push_v2.xml')
     

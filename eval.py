@@ -3,7 +3,9 @@ import random
 import numpy as np
 import os
 import imageio
-from metaworld.envs import ALL_V2_ENVIRONMENTS_GOAL_OBSERVABLE
+from envs.sawyer_drawer_open_v2_change_camera import SawyerDrawerOpenEnvV2_ChangeCamera
+
+from stable_baselines3 import SAC
 
 def save_gif(episode_name, episode_obs, dur=0.01, dir='gif'):
     os.makedirs(dir, exist_ok=True)
@@ -11,17 +13,11 @@ def save_gif(episode_name, episode_obs, dur=0.01, dir='gif'):
         for obs_np in episode_obs:
             writer.append_data(obs_np)
 
-print(metaworld.ML1.ENV_NAMES)  # Check out the available environments
-
-env_name = 'push-v2-goal-observable'
-camera_name = 'topview'
-# ml1 = metaworld.ML1(env_name) # Construct the benchmark, sampling tasks
-
-# env = ml1.train_classes[env_name]()  # Create an environment with task `pick_place`
-# task = random.choice(ml1.train_tasks)
-# env.set_task(task)  # Set task
-env  = ALL_V2_ENVIRONMENTS_GOAL_OBSERVABLE[env_name]()
-
+env_name = 'drawer-open-left-camera'
+camera_name = 'left'
+env = SawyerDrawerOpenEnvV2_ChangeCamera()
+model = SAC("MlpPolicy", env)
+model.load("sac")
 
 episode_return = 0
 episode_len = 0
@@ -33,25 +29,26 @@ width = 250
 height = 200
 
 obs = env.reset()  # Reset environment
-for i in range(0,10):
+for i in range(0,1):
     for j in range(0, 500):
         # breakpoint()
         # env.viewer.cam.lookat[0] = 0.1
-        # img = env.render(offscreen=True, camera_name=camera_name)
-        env.render()
-        # episode_obs.append(img)
-        a = env.action_space.sample()  # Sample an action
+        img = env.render(offscreen=True, camera_name=camera_name)
+        # env.render()
+        episode_obs.append(img)
+        a, _states = model.predict(obs, deterministic=True)
+        breakpoint()
         obs, reward, done, info = env.step(a)  # Step the environoment with the sampled random action
         episode_return += reward
         episode_len += 1
         if done:
             episode_done += 1
             break
-    env.reset() 
-"""     print(f'Episode {i}_{episode_done}, cum. return: {episode_return:0.1f}, length: {episode_len}.')
-    episode_name = f'ep_{i}_{env_name}_camera_{camera_name}.gif'
+    env.reset()
+    print(f'Episode {i}_{episode_done}, cum. return: {episode_return:0.1f}, length: {episode_len}.')
+    episode_name = f'SAC.gif'
     save_gif(episode_name, episode_obs, dur)
     episode_return = 0
     episode_len = 0
     episode_obs = []
-    """
+    
